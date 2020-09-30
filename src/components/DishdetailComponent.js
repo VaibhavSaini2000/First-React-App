@@ -38,7 +38,7 @@ class DishDetail extends Component{
                     <ul class = "list-unstyled">
                         {dish.comments.map((cmnt, i) => (
                             <li key={i}>
-                                {cmnt.comment} <br/> --{cmnt.author} {cmnt.date} <br/>
+                                {cmnt.comment} <br/> --{cmnt.author} , {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit' }).format(new Date(Date.parse(cmnt.date)))} <br/>
                             </li>
                         ))}
                     </ul>
@@ -54,14 +54,16 @@ class DishDetail extends Component{
     
     render(){
         
-        const selectedDish=this.props.selectedDish;
+        const selectedDish=this.props.dish;
 
         console.log('DishdetailComponent render is invoked');
 
         return(
+            <div class="container">
             <div className="row">
                 {this.renderDish(selectedDish)}
                 {this.renderComments(selectedDish)}
+            </div>
             </div>
         );
     }
