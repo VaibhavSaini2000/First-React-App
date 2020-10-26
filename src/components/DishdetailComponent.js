@@ -27,8 +27,7 @@ const minLength = (len) => (val) => (val) && (val.length >= len);
 
         handleSubmit(values) {
             this.toggleModal();
-            console.log('Current State is: ' + JSON.stringify(values));
-            alert('Current State is: ' + JSON.stringify(values));
+            this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
         }
 
         render(){
@@ -44,12 +43,12 @@ const minLength = (len) => (val) => (val) && (val.length >= len);
                         <ModalBody>
                             <LocalForm onSubmit={(values) => this.handleSubmit(values)}>
                             <Row className="form-group">
-                                <Label htmlFor="firstname" md={2}>Rating:</Label>
+                                <Label htmlFor="rating" md={2}>Rating:</Label>
                                 <Col md={10}>
                                     <Control.select model=".rating" id="rating" name="rating"
                                         placeholder="Select Rating" 
                                         className="form-control">
-                                        <option value="1">1</option>
+                                        <option defaultValue value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
@@ -57,7 +56,7 @@ const minLength = (len) => (val) => (val) && (val.length >= len);
                                     </Control.select>
                                     <Errors 
                                         className="text-danger"
-                                        model=".firstname"
+                                        model=".rating"
                                         show="touched"
                                         messages={{
                                             required: 'Required'
@@ -66,9 +65,9 @@ const minLength = (len) => (val) => (val) && (val.length >= len);
                                 </Col>
                             </Row>
                             <Row className="form-group">
-                                <Label htmlFor="yourname" md={2}>Your Name:</Label>
+                                <Label htmlFor="author" md={2}>Your Name:</Label>
                                 <Col md={10}>
-                                    <Control.text model=".yourname" id="yourname" name="yourname"
+                                    <Control.text model=".author" id="author" name="author"
                                         placeholder="Your Name"
                                         className="form-control"
                                         validators={{
@@ -77,7 +76,7 @@ const minLength = (len) => (val) => (val) && (val.length >= len);
                                     />
                                     <Errors 
                                         className="text-danger"
-                                        model=".yourname"
+                                        model=".author"
                                         show="touched"
                                         messages={{
                                             required: 'Required',
@@ -131,24 +130,20 @@ const minLength = (len) => (val) => (val) && (val.length >= len);
         }
     }
     
-    function RenderComments({comments}){
+    function RenderComments({comments, addComment, dishId}){
         if(comments!=null){
             return(
                 <div>
-                    <div>
-                        <h4>Comments</h4>
-                        <ul className = "list-unstyled">
-                            {comments.map((comment) => (
-                                <li key={comment.id}>
-                                    <p>{comment.comment}</p>
-                                    <p>--{comment.author} , {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit' }).format(new Date(Date.parse(comment.date)))}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        
-                    </div>
+                    <h4>Comments</h4>
+                    <ul className = "list-unstyled">
+                        {comments.map((comment) => (
+                            <li key={comment.id}>
+                                <p>{comment.comment}</p>
+                                <p>--{comment.author} , {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day:'2-digit' }).format(new Date(Date.parse(comment.date)))}</p>
+                            </li>
+                        ))}
+                    </ul>
+                    <CommentForm dishId={dishId} addComment={addComment}/>
                 </div>
             );
         }
@@ -176,10 +171,9 @@ const minLength = (len) => (val) => (val) && (val.length >= len);
                     </div>    
                     <div className="row">
                         <RenderDish dish = {props.dish} />
-                        <div  className="col-12 col-md-5 m-1">
-                            <RenderComments comments ={props.comments} />
-                            <CommentForm />
-                        </div>
+                        <RenderComments comments ={props.comments} 
+                            addComment={props.addComment}
+                            dishId={props.dish.id}/>
                     </div>
                 </div>
             );
